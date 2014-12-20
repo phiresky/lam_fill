@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8">
+<body>
+<script type="text/tmpl">
+    <h3>Todo-Lists of λpeople→(\name).join(" and "):</h3>
+    \people->(
+        <p> \name's Todo-List:</p>
+        <ul> \todo->(<li>\val</li>) </ul>
+    )
+    <h3>Things split from a String</h3>
+    \test2.split(",")->(<p>Thing \(key+1): \val</p>)
+    
+    \#tesht(hello:"hi")
+</script>
+
+<script type=xx id="tesht">
+    <s>MSG:\hello</s>
+	\booltest?hi:nei
+</script>
+
+<script>
+    var people = [{
+    name: "Peter",
+    todo: ["do stuff", "more stuff"]
+}, {
+    name: "John",
+    todo: ["test", "foo", "bar"]
+}];
+var booltest = false;
+var test2 = "something,something else,something more";
+var test3 = {x:"a,b,c"};
+λ_auto = true;
+</script>
+<script src="λ.js"></script>
+<pre id=vlc></pre>

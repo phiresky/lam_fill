@@ -2,7 +2,7 @@
 // amazing template engine
 window.λ_fill = (function () {
     var lparen = /^\(/, rparen = /^\)/, lambda = /^(\\|λ)/, arrow = /^(->|→)/, dot = /^\./,
-        escape = /^\\/, identifier = /^[\w_]/, runOther = /^#/;
+        escape = /^\\/, identifier = /^[\w_]/, runOther = /^#/, question = /^\?/, trinarySep = /^:/;
     function _map(o, fn) { // objects dont have a map function
         if (o.map) return o.map(fn);
         return Object.keys(o).map(function (key) {
@@ -86,6 +86,12 @@ window.λ_fill = (function () {
                 else if (maybeGet(dot)) {
                     out += "." + parseToken();
                 } else if(hasNext(lparen)) out += "(" + parseExpression(false) + ")";
+				else if(maybeGet(question)) {
+					var iftrue = hasNext(lparen)?parseExpression(true):parseToken();
+					var iffalse = "";
+					if(maybeGet(trinarySep)) iffalse = hasNext(lparen)?parseExpression(true):parseToken();
+					out = '('+out+")?('"+iftrue+"'):('"+iffalse+"')";
+				}
                 else return "_join(" + out + ")";
             }
         }

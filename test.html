@@ -10,25 +10,27 @@
     <h3>Things split from a String</h3>
     \test2.split(",")->(<p>Thing \(key+1): \val</p>)
     
-    \#tesht(hello:"hi")
+	<div>Including other templates:
+    \#tesht(hello:"Hello",bold:true)
+    \#tesht(hello:"Hi")
+	</div>
 </script>
 
-<script type=xx id="tesht">
-    <s>MSG:\hello</s>
-	\booltest?hi:nei
+<script type="text/tmpl-noauto" id="tesht">
+	\bold?(<b>)
+		<p>Message: "\hello"</p>
+	\bold?(</b>)
 </script>
 
 <script>
     var people = [{
-    name: "Peter",
-    todo: ["do stuff", "more stuff"]
-}, {
-    name: "John",
-    todo: ["test", "foo", "bar"]
-}];
-var booltest = false;
+		name: "Peter",
+		todo: ["do stuff", "more stuff"]
+	}, {
+		name: "John",
+		todo: ["test", "foo", "bar"]
+	}];
 var test2 = "something,something else,something more";
-var test3 = {x:"a,b,c"};
 λ_auto = true;
 </script>
 <script src="λ.js"></script>

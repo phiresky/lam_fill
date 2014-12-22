@@ -12,9 +12,10 @@
     <h3>Things split from a String</h3>
     \test2.split(",")->(<p>Thing \(key+1): \val</p>)
     
-	<div>Including other templates:
-    \#hitmpl(hello:"Hello",bold:true)
-    \#hitmpl(hello:"Hi")
+	<div><h3>Including other templates:</h3>
+		\#hitmpl(hello:"Hello",bold:true)
+		\#hitmpl(hello:"Hi")
+		\#link(url:"http://google.com/search?q=troll")
 	</div>
 </script>
 
@@ -22,6 +23,9 @@
 	\bold?(<b>)
 		<p>Message: "\hello"</p>
 	\bold?(</b>)
+</script>
+<script type="text/tmpl-noauto" id="link">
+<a href="λurl">λ(url.split("/")[2])</a>
 </script>
 
 

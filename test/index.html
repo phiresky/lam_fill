@@ -1,8 +1,8 @@
 <!doctype html>
 <meta charset="utf-8">
-<body>
-
-<script src="λ.js"></script>
+<link rel="stylesheet" href="bootstrap.min.css">
+<body class="container">
+<script src="../λ.js"></script>
 <script type="text/tmpl">
     <h3>Todo-Lists of λpeople→(\name).join(" and "):</h3>
     \people->(
@@ -25,13 +25,13 @@
 </script>
 
 <script>
-    var people = [{
-		name: "Peter",
-		todo: ["do stuff", "more stuff"]
-	}, {
-		name: "John",
-		todo: ["test", "foo", "bar"]
-	}];
+var people = [{
+	name: "Peter",
+	todo: ["do stuff", "more stuff"]
+}, {
+	name: "John",
+	todo: ["test", "foo", "bar"]
+}];
 var test2 = "something,something else,something more";
 λ_fill.auto();
 
@@ -41,4 +41,3 @@ console.log(
 		λ_fill("%0 arguments work too: %0 1: %1, %0 2: %2",
 			"Positional","foo","bar"));
 </script>
-<pre id=vlc></pre>

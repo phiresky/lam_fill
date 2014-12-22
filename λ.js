@@ -1,5 +1,5 @@
-// λ.js :
-// amazing template engine
+// λ.js: amazing template engine
+// https://github.com/phiresky/lam_fill
 window.λ_fill = (function () {
     var cfg = {
         lparen: /^\(/,
@@ -12,17 +12,8 @@ window.λ_fill = (function () {
         runOther: /^#/,
         question: /^\?/,
         trinarySep: /^:/,
-        autoQuery: "script[type='text/tmpl'],script[type=λ]"
-    };
-    function _map(o, fn) { // objects dont have a map function
-        if (o.map) return o.map(fn);
-        return Object.keys(o).map(function (key) {
-            return fn(o[key], key);
-        });
-    };
-    function _join(x) {
-        if (x instanceof Array) return x.join("");
-        else return x;
+        autoQuery: "script[type='text/tmpl'],script[type=λ]",
+		
     };
     var cache = {get:function(id) {
         if(!this[id]) {
@@ -32,16 +23,20 @@ window.λ_fill = (function () {
         }
         return this[id];
     }};
-    // λ_fill :: template -> (data -> html)  
+    // λ_fill() :: template -> (data -> html)  
+    // λ_fill() :: template, data -> html
     var fill = function (template) {
+		if(arguments.length > 1) {
+			return fill(template).apply(null,[].slice.call(arguments,1));
+		}
         if(!/\W/.test(template)) {
-           // interpret as id
+           // interpret as id if has only word characters
            return cache.get(template);
         }
         var i = 0;
         var get = function (want) {
             var got = want.exec(template.substr(i));
-            if (!got) throw "got " + got + ", wanted " + want;
+            if (!got) throw "got " + template.substr(i,7) + "..., expected " + want;
             i += got[0].length;
             return got;
         };
@@ -104,9 +99,11 @@ window.λ_fill = (function () {
             if (maybeGet(cfg.runOther))
                 return "λ_fill('"+parseToken()+"')({"+parseExpression(false)+"})";
             var out = parseToken();
+			if(out.length == 1 && (!isNaN(+out))) out = "arguments["+(+out)+"]";
             while (true) {
                 if (maybeGet(cfg.arrow)) {
-                    out = "_map(" + out + "," + wrapExpression() + ")";
+					get(cfg.lparen);
+                    out = "λ_fill._map(" + out + "," + wrapExpression() + ")";
                 } else if (maybeGet(cfg.dot)) {
                     out += "." + parseToken();
                 } else if(hasNext(cfg.lparen)) out += "(" + parseExpression(false) + ")";
@@ -116,12 +113,22 @@ window.λ_fill = (function () {
                     if(maybeGet(cfg.trinarySep)) iffalse = parseExprOrToken();
                     out = '((typeof ('+out+')!== "undefined") && '+out+")?('"+iftrue+"'):('"+iffalse+"')";
                 }
-                else return "_join(" + out + ")";
+                else return "λ_fill._join(" + out + ")";
             }
         }
         eval("var fn = " + wrapExpression());
         return fn;
     }
+    fill._map = function(o, fn) { // objects dont have a map function
+        if (o.map) return o.map(fn);
+        return Object.keys(o).map(function (key) {
+            return fn(o[key], key);
+        });
+    };
+    fill._join = function(x) {
+        if (x instanceof Array) return x.join("");
+        else return x;
+    };
                  
     fill.inplace = function(id, data) {
         document.getElementById(id).outerHTML = "<div id='"+id+"'>"+cache.get(id)(data)+"</div>";
@@ -132,7 +139,12 @@ window.λ_fill = (function () {
             t.outerHTML = λ_fill(t.textContent)(window);
         });
     };
-    fill.config = cfg;
+	fill.config = function(things) {
+		for(var what in things) {
+			cfg[what] = new RegExp("^"+things[what].source);
+		}
+	}
+
     return fill;
 }());
 if(window["λ_auto"]) λ_fill.auto();

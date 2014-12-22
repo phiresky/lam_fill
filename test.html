@@ -1,6 +1,8 @@
 <!doctype html>
 <meta charset="utf-8">
 <body>
+
+<script src="λ.js"></script>
 <script type="text/tmpl">
     <h3>Todo-Lists of λpeople→(\name).join(" and "):</h3>
     \people->(
@@ -11,12 +13,12 @@
     \test2.split(",")->(<p>Thing \(key+1): \val</p>)
     
 	<div>Including other templates:
-    \#tesht(hello:"Hello",bold:true)
-    \#tesht(hello:"Hi")
+    \#hitmpl(hello:"Hello",bold:true)
+    \#hitmpl(hello:"Hi")
 	</div>
 </script>
 
-<script type="text/tmpl-noauto" id="tesht">
+<script type="text/tmpl-noauto" id="hitmpl">
 	\bold?(<b>)
 		<p>Message: "\hello"</p>
 	\bold?(</b>)
@@ -31,7 +33,12 @@
 		todo: ["test", "foo", "bar"]
 	}];
 var test2 = "something,something else,something more";
-λ_auto = true;
+λ_fill.auto();
+
+// setting lambda to different regex
+λ_fill.config({lambda:/%/});
+console.log(
+		λ_fill("%0 arguments work too: %0 1: %1, %0 2: %2",
+			"Positional","foo","bar"));
 </script>
-<script src="λ.js"></script>
 <pre id=vlc></pre>

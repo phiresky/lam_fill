@@ -12,7 +12,7 @@ div.test {
 	border: 1px solid black;
 }
 .test.success {
-	background-color:lightgreen;
+	background-color:#bfb;
 }
 .test.failed {
 	background-color:#faa;
@@ -20,17 +20,20 @@ div.test {
 </style>
 </style>
 <div id=tests class="container">
+	<h2>λ_fill tests</h2>
+	<hr>
 	<script type=λ id="testtemplate">
 		λtests->(
 		<div class="test λsuccess?success:failed">
 			<h4>Test λkey: λname</h4>
+			λconfig?(
+				<div>Config:
+					<pre><code>λ(JSON.stringify(config,null,2))</code></pre>
+				</div>
+			)
 			<div>Template:
 				<pre><code>λinput</code></pre>
 			</div>
-			λconfig?(
-			<div>Config:
-				<pre><code>λ(JSON.stringify(config,null,2))</code></pre>
-			</div>)
 			<div>Dataλpositional?( (Positional)) :
 				<pre><code>λ(JSON.stringify(data,null,2))</code></pre>
 			</div>
@@ -47,28 +50,36 @@ div.test {
 			)
 		</div>
 		)
+	For a more complex example, see <a href="sample.html">sample.html</a> or the <a href="view-source:λlocation.href">source code of this page</a>
 	</script>
-	<a href="sample.html">For a more complex example, see sample.html</a>
 </div>
 <script>
 var tests = [
 	{
+		name: "Doing nothing",
 		input:"no replacement",
 		data:{},
 		output:"no replacement",
 	}, {
-		input:"λsimpletext",
-		data:{simpletext:"test sample"},
-		output:"test sample"
+		name: "Basic replacement",
+		input:"Just some λthing",
+		data:{thing:"simple sample text"},
+		output:"Just some simple sample text"
 	}, {
-		input:"λfooλbar",
+		name: "Multiple replacement",
+		input:"λfoo and λbar",
 		data:{foo:"thing one",bar:"thing two"},
-		output:"thing onething two"
+		output:"thing one and thing two"
 	}, {
 		name: "Simple array map",
 		input:"λarr->( λkey:λval )",
 		data:{arr:["a","b","c"]},
 		output:" 0:a  1:b  2:c "
+	}, {
+		name: "Object Array map",
+		input:"λpeople->( λname )",
+		data:{people:[{name:"John"},{name:"Jenny"}]},
+		output:" John  Jenny "
 	}, {
 		name: "Array map and join",
 		input:"λarr.length things: λarr->(λkey:λval).join(', ')",
@@ -83,9 +94,15 @@ var tests = [
 		output:"Positional arguments work too: Positional 1: foo, Positional 2: bar"
 	}, {
 		name: "Object map",
-		input:"People: λpeople->(\nName: λfirstname λlastname, ID: λkey)",
+		input:"People: λpeople->(\n\tName: λfirstname λlastname, ID: λkey\n)",
 		data:{people:{"ea386804":{firstname:"John",lastname:"Smith"},"b89b9144":{firstname:"Chuck",lastname:"Testa"}}},
-		output:"People: \nName: John Smith, ID: ea386804\nName: Chuck Testa, ID: b89b9144"
+		output:"People: \n\tName: John Smith, ID: ea386804\n\n\tName: Chuck Testa, ID: b89b9144\n"
+	}, {
+		name: "Boolean",
+		input: "<ul>λpeople→(<li λvip?(style='font-weight: bold')>λname</li>)</ul>",
+		data: {people:[{name:"John Smith"},{name:"Chuck Testa",vip:true}]},
+		output: "<ul><li >John Smith</li><li style='font-weight: bold'>Chuck Testa</li></ul>",
+		outputHtml: true
 	}
 ];
 tests.forEach(function(test, index) {
@@ -96,10 +113,11 @@ tests.forEach(function(test, index) {
 		else 
 			test.actualOutput = λ_fill(test.input, test.data);
 		λ_fill.resetConfig();
+		test.input = $("<div>").text(test.input).html();
 		test.success = (test.output === test.actualOutput);
 	} catch(e) {
 		test.actualOutput = "ERR: " + e;
 	}
 });
-λ_stable.inplace("testtemplate",tests);
+λ_stable.inplace("testtemplate",window);
 </script>

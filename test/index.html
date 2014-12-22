@@ -1,43 +1,84 @@
 <!doctype html>
 <meta charset="utf-8">
 <link rel="stylesheet" href="bootstrap.min.css">
-<body class="container">
+<script src="jquery.min.js"></script>
 <script src="../λ.js"></script>
-<script type="text/tmpl">
-    <h3>Todo-Lists of λpeople→(\name).join(" and "):</h3>
-    \people->(
-        <p> \name's Todo-List:</p>
-        <ul> \todo->(<li>\val</li>) </ul>
-    )
-    <h3>Things split from a String</h3>
-    \test2.split(",")->(<p>Thing \(key+1): \val</p>)
-    
-	<div>Including other templates:
-    \#hitmpl(hello:"Hello",bold:true)
-    \#hitmpl(hello:"Hi")
-	</div>
-</script>
-
-<script type="text/tmpl-noauto" id="hitmpl">
-	\bold?(<b>)
-		<p>Message: "\hello"</p>
-	\bold?(</b>)
-</script>
-
+<script> lambda_fn_name = "λ_stable";</script>
+<script src="λstable.js"></script>
+<style>
+div.test {
+	margin:1em;
+	padding:1em;
+	border: 1px solid black;
+}
+.test.success {
+	background-color:lightgreen;
+}
+.test.failed {
+	background-color:#faa;
+}
+</style>
+</style>
+<div id=tests class="container">
+	<script type=λ id="testtemplate">
+		λtests->(
+		<div class="test λsuccess?success:failed">
+			<h4>Test λkey: λname</h4>
+			<div>Input:
+				<pre><code>λinput</code></pre>
+			</div>
+			<div>Data:
+				<pre><code>λ(JSON.stringify(data,null,3))</code></pre>
+			</div>
+			<div>Expected Output:
+				<pre><code>λoutput</code></pre>
+			</div>
+			λsuccess?(
+				Success
+			):(
+				<div>Actual Output:
+					<pre><code>λactualOutput</code></pre>
+				</div>
+				Failed
+			)
+		</div>
+		)
+	</script>
+	<a href="sample.html">For a more complex example, see sample.html</a>
+</div>
 <script>
-var people = [{
-	name: "Peter",
-	todo: ["do stuff", "more stuff"]
-}, {
-	name: "John",
-	todo: ["test", "foo", "bar"]
-}];
-var test2 = "something,something else,something more";
-λ_fill.auto();
-
-// setting lambda to different regex
-λ_fill.config({lambda:/%/});
-console.log(
-		λ_fill("%0 arguments work too: %0 1: %1, %0 2: %2",
-			"Positional","foo","bar"));
+var tests = [
+	{
+		input:"no replacement",
+		data:{},
+		output:"no replacement",
+	}, {
+		input:"λsimpletext",
+		data:{simpletext:"test sample"},
+		output:"test sample"
+	}, {
+		input:"λfooλbar",
+		data:{foo:"thing one",bar:"thing two"},
+		output:"thing onething two"
+	}, {
+		name: "Simple array map",
+		input:"λarr->( λkey:λval )",
+		data:{arr:["a","b","c"]},
+		output:" 0:a  1:b  2:c "
+	}, {
+		name: "Array map and join",
+		input:"λarr.length things: λarr->(λkey:λval).join(', ')",
+		data:{arr:["a","b","c"]},
+		output:"3 things: 0:a, 1:b, 2:c"
+	}
+];
+tests.forEach(function(test, index) {
+	try {
+		test.actualOutput = λ_fill(test.input, test.data);
+		test.success = (test.output === test.actualOutput);
+	} catch(e) {
+		test.actualOutput = "ERR: " + e;
+	}
+});
+λ_stable.inplace("testtemplate",tests);
 </script>

@@ -2,4 +2,4 @@
 ------
 Simple template engine
 
-See test.html for examples
+See test/ for examples

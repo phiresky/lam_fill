@@ -14,8 +14,9 @@
         question: /^\?/,
         trinarySep: /^:/,
         autoQuery: "script[type='text/tmpl'],script[type=λ]",
-		
     };
+	var origcfg = {};
+	for(var k in cfg) origcfg[k] = cfg[k];
     var cache = {get:function(id) {
         if(!this[id]) {
             var ele = document.getElementById(id);
@@ -142,8 +143,11 @@
     };
 	fill.config = function(things) {
 		for(var what in things) {
-			cfg[what] = new RegExp("^("+things[what].source+")");
+			cfg[what] = new RegExp("^("+(things[what].source||things[what])+")");
 		}
-	}
+	};
+	fill.resetConfig = function() {
+		for(var k in origcfg) cfg[k] = origcfg[k];
+	};
 	window[lambda_name] = fill;
 }());

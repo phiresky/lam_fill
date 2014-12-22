@@ -24,11 +24,15 @@ div.test {
 		λtests->(
 		<div class="test λsuccess?success:failed">
 			<h4>Test λkey: λname</h4>
-			<div>Input:
+			<div>Template:
 				<pre><code>λinput</code></pre>
 			</div>
-			<div>Data:
-				<pre><code>λ(JSON.stringify(data,null,3))</code></pre>
+			λconfig?(
+			<div>Config:
+				<pre><code>λ(JSON.stringify(config,null,2))</code></pre>
+			</div>)
+			<div>Dataλpositional?( (Positional)) :
+				<pre><code>λ(JSON.stringify(data,null,2))</code></pre>
 			</div>
 			<div>Expected Output:
 				<pre><code>λoutput</code></pre>
@@ -70,11 +74,28 @@ var tests = [
 		input:"λarr.length things: λarr->(λkey:λval).join(', ')",
 		data:{arr:["a","b","c"]},
 		output:"3 things: 0:a, 1:b, 2:c"
+	}, {
+		name: "Positional args",
+		config: {lambda:"%"},
+		input:"%0 arguments work too: %0 1: %1, %0 2: %2",
+		positional:true,
+		data:["Positional","foo","bar"],
+		output:"Positional arguments work too: Positional 1: foo, Positional 2: bar"
+	}, {
+		name: "Object map",
+		input:"People: λpeople->(\nName: λfirstname λlastname, ID: λkey)",
+		data:{people:{"ea386804":{firstname:"John",lastname:"Smith"},"b89b9144":{firstname:"Chuck",lastname:"Testa"}}},
+		output:"People: \nName: John Smith, ID: ea386804\nName: Chuck Testa, ID: b89b9144"
 	}
 ];
 tests.forEach(function(test, index) {
 	try {
-		test.actualOutput = λ_fill(test.input, test.data);
+		if(test.config) λ_fill.config(test.config);
+		if(test.positional)
+			test.actualOutput = λ_fill(test.input).apply(null,test.data);
+		else 
+			test.actualOutput = λ_fill(test.input, test.data);
+		λ_fill.resetConfig();
 		test.success = (test.output === test.actualOutput);
 	} catch(e) {
 		test.actualOutput = "ERR: " + e;

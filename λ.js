@@ -17,14 +17,15 @@
     };
 	var origcfg = {};
 	for(var k in cfg) origcfg[k] = cfg[k];
-    var cache = {get:function(id) {
-        if(!this[id]) {
+    var cache = {};
+	var cacheGet = function(id) {
+        if(!cache[id]) {
             var ele = document.getElementById(id);
             if(!ele) throw "Can't find element with id "+id;
-            this[id] = fill(ele.textContent);
+            cache[id] = fill(ele.textContent);
         }
-        return this[id];
-    }};
+        return cache[id];
+    };
     // λ_fill() :: template -> (data -> html)  
     // λ_fill() :: template, data -> html
     var fill = function (template) {
@@ -33,7 +34,7 @@
 		}
         if(template.length > 0 && !/\W/.test(template)) {
            // interpret as id if has only word characters
-           return cache.get(template);
+           return cacheGet(template);
         }
         var i = 0;
         var get = function (want) {
@@ -133,12 +134,13 @@
     };
                  
     fill.inplace = function(id, data) {
-        document.getElementById(id).outerHTML = "<div id='"+id+"'>"+cache.get(id)(data)+"</div>";
+        document.getElementById(id).outerHTML = "<div id='"+id+"'>"+cacheGet(id)(data)+"</div>";
     }
     fill.auto = function() {
         // automatically parse and replace <script type=λ> tags
         [].forEach.call(document.querySelectorAll(cfg.autoQuery), function (t) {
-            t.outerHTML = λ_fill(t.textContent)(window);
+			if(t.id) fill.inplace(t.id, window);
+            else t.outerHTML = fill(t.textContent, window);
         });
     };
 	fill.config = function(things) {

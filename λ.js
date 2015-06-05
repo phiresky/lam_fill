@@ -78,11 +78,6 @@
                 if (maybeGet(cfg.lambda)) {
                     if(hasNext(cfg.lambda)) {
 						// escaped, ignore
-						for(var k=iBefore; k < i; k++) {
-							var chr = template[k];
-							if(escape) chr = escape_chr(chr);
-							out += chr;
-						}
 					} else {
 						i = iBefore;
                         out += "'+" + parseLambda() + "+'";

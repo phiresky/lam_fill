@@ -107,9 +107,9 @@ var tests = [
 		outputHtml: true
 	}, {
 		name: "Ignore escaped lambda",
-		input: "test λλblabli\ntest λλ(blabli2)\ntest \\\\bla\ntest \\\\(blabla)",
-		data: {},
-		output: "test λλblabli\ntest λλ(blabli2)\ntest \\\\bla\ntest \\\\(blabla)"
+		input: "test λλblabli\ntest λλ(blabli2)\ntest \\λbla\ntest \\\\bla\ntest \\\\(blabla)\nλλλbla\nλλλλbla",
+		data: {bla:"xyz"},
+		output: "test λblabli\ntest λ(blabli2)\ntest λbla\ntest \\bla\ntest \\(blabla)\nλxyz\nλλbla"
 	}
 ];
 tests.forEach(function(test, index) {

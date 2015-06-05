@@ -62,6 +62,10 @@
             return out;
         }
 
+		function escape_chr(chr) {
+			return chr.replace(/(['"\\])/, "\\$1").replace(/\n/,"\\n\\\n");
+		}
+
         function parseExpression(escape) {
             var depth = 1, out = "";
             maybeGet(cfg.lparen);
@@ -70,15 +74,23 @@
                 if (hasNext(cfg.lparen))++depth;
                 if (hasNext(cfg.rparen))--depth;
                 if (depth === 0) break;
-                if (hasNext(cfg.lambda)) {
-                    if(template[i+1] === cfg.escape) ++i;
-                    else {
+				var iBefore = i;
+                if (maybeGet(cfg.lambda)) {
+                    if(hasNext(cfg.lambda)) {
+						// escaped, ignore
+						for(var k=iBefore; k < i; k++) {
+							var chr = template[k];
+							if(escape) chr = escape_chr(chr);
+							out += chr;
+						}
+					} else {
+						i = iBefore;
                         out += "'+" + parseLambda() + "+'";
                         continue;
                     }
                 }
                 var chr = template[i++];
-                if(escape) chr = chr.replace(/(['"\\])/, "\\$1").replace(/\n/,"\\n\\\n");
+                if(escape) chr = escape_chr(chr);
                 out += chr;
             }
             get(cfg.rparen);

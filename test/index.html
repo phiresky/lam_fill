@@ -105,6 +105,11 @@ var tests = [
 		data: {people:[{name:"John Smith"},{name:"Chuck Testa",vip:true}]},
 		output: "<ul><li >John Smith</li><li style='font-weight: bold'>Chuck Testa</li></ul>",
 		outputHtml: true
+	}, {
+		name: "Ignore escaped lambda",
+		input: "test λλblabli\ntest λλ(blabli2)\ntest \\\\bla\ntest \\\\(blabla)",
+		data: {},
+		output: "test λλblabli\ntest λλ(blabli2)\ntest \\\\bla\ntest \\\\(blabla)"
 	}
 ];
 tests.forEach(function(test, index) {
